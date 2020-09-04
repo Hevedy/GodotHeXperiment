@@ -78,6 +78,17 @@ func set_LOD2_Mesh(value: Mesh):
 func set_LOD3_Mesh(value: Mesh):
 	LOD3_Mesh= value
 
+func find_LODs():
+	for child in self.get_children():
+		if( "_LOD1" in child.get_name()):
+			LOD1_Inst = child
+		elif( "_LOD2" in child.get_name()):
+			LOD2_Inst = child
+		elif( "_LOD3" in child.get_name()):
+			LOD3_Inst = child
+		else:
+			LOD0_Inst = child
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	LOD0_Inst = MeshInstance.new()
