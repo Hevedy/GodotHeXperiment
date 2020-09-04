@@ -1,0 +1,69 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=2]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type spatial;
+render_mode unshaded, cull_disabled, skip_vertex_transform, blend_add;
+
+uniform float size = 1.0;
+
+const float PI = 3.141592653;
+const float HALF_PI = PI/2.0;
+
+varying mat4 inv_project_mat;
+varying vec3 camera_pos;
+
+uniform float G_Quality: hint_range(0,1) = 1.0;
+uniform float CA_Intensity: hint_range(0,1) = 0.1;
+uniform float CA_Saturation: hint_range(0,1) = 0.1;
+
+float variable_smoothstep(float x, float N) {
+	if(N > 0.0) {
+		return pow(x, N);
+	} else if(N < 0.0) {
+		if(x <= 0.5) {
+			return pow(2.0*x, -N) / 2.0;
+		} else {
+			return 1.0 - pow(2.0*(1.0-x), -N) / 2.0;
+		}
+	}
+	
+	return 0.0;
+}
+
+uint hash(uint x) {
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = ((x >> uint(16)) ^ x) * uint(73244475);
+	x = (x >> uint(16)) ^ x;
+	return x;
+}
+
+float rand_from_seed(inout uint seed) {
+	int k;
+	int s = int(seed);
+	if (s == 0)
+	s = 305420679;
+	k = s / 127773;
+	s = 16807 * (s - k * 127773) - 2836 * k;
+	if (s < 0)
+		s += 2147483647;
+	seed = uint(s);
+	return float(seed % uint(65536)) / 65535.0;
+}
+
+void vertex() {
+
+}
+
+void fragment() {
+	//ALBEDO = vec3(1.0,0.0,0.0);
+	//COLOR = vec3(1.0,0.0,0.0);
+
+}"
+
+[resource]
+render_priority = 20
+shader = SubResource( 1 )
+shader_param/size = 1.0
+shader_param/G_Quality = 1.0
+shader_param/CA_Intensity = 0.1
+shader_param/CA_Saturation = 0.1
