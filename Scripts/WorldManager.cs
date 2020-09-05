@@ -26,29 +26,28 @@
 
 using Godot;
 using System;
-using MeshLOD;
+//using MeshLOD;
 
 [Tool]
 public class WorldManager : Spatial
 {
-    static Thread thread;
-    static bool threadTerminated = false;
+	static Thread thread;
+	static bool threadTerminated = false;
 
-    [Export] public float LOD_DistanceMax { get; set; } = 100000.0f;
+	[Export] public float LOD_DistanceMax { get; set; } = 100000.0f;
 
-    private void StartThread() {
-        if( thread != null) {
-            threadTerminated = true;
-            thread.Abort();
-        }
-        thread = new Thread(WorldManager.ThreadLoop);
-        threadTerminated = false;
-        thread.Start();
-    }
+	private void StartThread() {
+		if( thread != null) {
+			threadTerminated = true;
+		}
+		thread = new Thread();
+		threadTerminated = false;
+		thread.Start(this,"LodThread");
+	}
 
-    private void StopThread() {
-        threadTerminated = true;
-    }
+	private void StopThread() {
+		threadTerminated = true;
+	}
 /*
 	var LODNodesList = []
 	var lodDistanceMax = max(100.0, LOD_DistanceMax)
@@ -69,40 +68,46 @@ public class WorldManager : Spatial
 	#print("I'm a thread! Userdata is: ")
 */
 
-    private void ThreadLoop() {
+	private void ThreadLoop() {
 
-        int lodDistanceCap = Mathf.Clamp(100.0f, LOD_DistanceMax);
-        Node playerCam;
-        Godot.Collections.Array<Node> childrens = GCCollectionMode;
-        Godot.Collections.Array<MeshLOD> LODArray;
-        foreach (Node child in childrens) {
-            if( child == MeshLOD ) {
+		float lodDistanceCap = Mathf.Max(100.0f, LOD_DistanceMax);
+		var playerCam = GetTree().Root.GetViewport().GetCamera();//GetViewport().GetCamera();
+		Vector3 playerDist;
+		Godot.Collections.Array childrens = GetNode("parent").GetChildren();
+		Godot.Collections.Array<MeshLOD> LODArray = new Godot.Collections.Array<MeshLOD>();
+		foreach (var child in childrens) {
+			if( child is MeshLOD ) {
+				LODArray.Add( (MeshLOD)child );
+			}
+		}
+		while(true) {
+			if(threadTerminated) {
+				break;
+			}
+			playerDist = playerCam.GlobalTransform.origin;
+			foreach (MeshLOD lod in LODArray) {
+				lod.set_Distance(Mathf.Min(lod.GlobalTransform.origin.DistanceTo(playerDist),lodDistanceCap));
+			}
 
-            }
-        }
-        while(true) {
-
-            if(threadTerminated) {
-                break;
-            }
-        }
-    }
+		}
+	}
 
 
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
-        StartThread();
-    }
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
+	{
+		StartThread();
+	}
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+	//  // Called every frame. 'delta' is the elapsed time since the previous frame.
+	//  public override void _Process(float delta)
+	//  {
+	//      
+	//  }
 
-    public override void _Exit_Tree()
-    {
-        StopThread();
-    }
+	public override void _ExitTree()
+	{
+		StopThread();
+		//base._ExitTree();
+	}
 }
