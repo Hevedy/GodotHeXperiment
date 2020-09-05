@@ -32,9 +32,6 @@ using System.Collections.Generic;
 [Tool]
 public class MeshInstaceLODNew : MeshInstance
 {
-	// Declare member variables here. Examples:
-	// private int a = 2;
-	// private string b = "text";
 
 	static MeshInstance LOD0_Inst;
 	static MeshInstance LOD1_Inst;
