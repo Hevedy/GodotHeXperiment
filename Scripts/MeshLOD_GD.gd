@@ -25,8 +25,8 @@
 #==============================================================================
 
 tool
-extends MeshInstance
-class_name MeshInstaceLOD
+extends Spatial
+class_name MeshLOD_GD
 
 var LOD0_Inst
 var LOD1_Inst
@@ -34,7 +34,7 @@ var LOD2_Inst
 var LOD3_Inst
 
 var LOD_Num
-export (int,-1,3) var LOD_Preview: int = 0 setget set_LOD_Preview
+export (int,-1,3,1) var LOD_Preview: int = 0 setget set_LOD_Preview
 export (float, 1.0,10000.0,0.01) var LOD1_Dist: float = 1000.0 setget set_LOD1_Dist
 export (float, 1.0,10000.0,0.01) var LOD2_Dist: float = 2000.0 setget set_LOD2_Dist
 export (float, 1.0,10000.0,0.01) var LOD3_Dist: float = 3000.0 setget set_LOD3_Dist
@@ -68,8 +68,10 @@ func find_LODs():
 			LOD2_Inst = child
 		elif( "_LOD3" in child.get_name()):
 			LOD3_Inst = child
-		elif!( "_Col" in child.get_name()):
+		elif( "_LOD0" in child.get_name()):
 			LOD0_Inst = child
+		#elif!( "_Col" in child.get_name()):
+		#	LOD0_Inst = child
 			
 	LOD_Num = 4
 	if !LOD3_Inst:
