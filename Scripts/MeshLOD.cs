@@ -30,7 +30,7 @@ using System;
 using System.Collections.Generic;
 
 [Tool]
-public class MeshInstaceLODNew : MeshInstance
+public class MeshLOD : Spatial
 {
 
 	static MeshInstance LOD0_Inst;
@@ -68,8 +68,10 @@ public class MeshInstaceLODNew : MeshInstance
 				LOD2_Inst = (MeshInstance)child;
 			} else if( name.Contains("_LOD3") ) {
 				LOD3_Inst = (MeshInstance)child;
-			} else if( !name.Contains("_Coll") ) {
+			} else if( name.Contains("_LOD0") ) {
 				LOD0_Inst = (MeshInstance)child;
+			} else if( !name.Contains("_Coll") ) {
+				//LOD0_Inst = (MeshInstance)child;
 			}
 		}
 		LOD_Num = 4;
