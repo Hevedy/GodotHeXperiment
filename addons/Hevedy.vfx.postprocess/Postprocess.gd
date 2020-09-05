@@ -71,42 +71,39 @@ func _process(delta : float) -> void:
 func set_ca_intensity(value : float) -> void:
 	CA_Intensity = value
 	material.set_shader_param("CA_Intensity", CA_Intensity)
-	if canvas:
-		canvas.visible = CA_Intensity != 0
 
 func set_ca_saturation(value : float) -> void:
 	CA_Saturation = value
 	material.set_shader_param("CA_Saturation", CA_Saturation)
-	if canvas:
-		canvas.visible = CA_Saturation != 0
 	
 
 func set_LODDistanceMax(value : float) -> void:
 	LOD_DistanceMax = value
 
+func isThreadTerminated():
+	return threadTerminated
 
 func _thread_function(userdata):
 	var LODNodesList = []
 	var lodDistanceMax = max(100.0, LOD_DistanceMax)
-	var playerCam = get_tree().get_root().get_node("Main/Player")
+	var playerCam = get_tree().get_root().get_viewport().get_camera() #get_tree().get_root().get_node("Main/Player")
 	var playerLoc = playerCam.get_global_transform().origin
+	#TODO Hex level LOD manager by areas and areas with LODs
 	var children_of_bindings = get_node("parent").get_children()
 	for child in children_of_bindings:
-		if child.get_class() == "Node":
-			child.set_Distance(clamp(child.global_transform.origin.distance_to( playerLoc ),0.0,lodDistanceMax))
+		if child.get_class() == "MeshInstaceLOD":
+			#child.set_Distance(clamp(child.global_transform.origin.distance_to( playerLoc ),0.0,lodDistanceMax))
 			LODNodesList.insert(LODNodesList.size(),child)
 	
 	# Print the userdata ("Wafflecopter")
 	while(!isThreadTerminated()):
 		playerLoc = playerCam.get_global_transform().origin
 		for child in LODNodesList:
-			child.set_Distance(clamp(child.global_transform.origin.distance_to( playerLoc ),0.0,lodDistanceMax))
+			pass
+			#child.set_Distance(clamp(child.global_transform.origin.distance_to( playerLoc ),0.0,lodDistanceMax))
 	#print("I'm a thread! Userdata is: ")
-
-func isThreadTerminated():
-	return threadTerminated
 
 # Thread must be disposed (or "joined"), for portability.
 func _exit_tree():
 	threadTerminated = true
-	thread.wait_to_finish()
+	var result = thread.wait_to_finish()
