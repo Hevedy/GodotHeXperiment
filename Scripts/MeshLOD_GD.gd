@@ -91,6 +91,7 @@ func find_LODs():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	self.add_to_group("MeshLOD")
 	find_LODs()
 	if LOD_Preview < 0:
 		set_Distance(1000.0)
