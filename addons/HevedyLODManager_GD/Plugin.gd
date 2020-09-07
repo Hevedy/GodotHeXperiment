@@ -136,4 +136,16 @@ func _editorTick_function(_userdata):
 		for child in LODNodesListEditor:
 			var dist = clamp(child.global_transform.origin.distance_to( camLoc ),0.0,LODDistanceMax)
 			#print(dist)
-			child.set_Distance(dist)
+			if child.LODDistance == dist:
+				continue
+			child.LODDistanceLast = child.LODDistance
+			child.LODDistance = dist
+			if dist > child.LOD1_Dist and dist < child.LOD2_Dist: #LOD1
+				child.set_LOD(1)
+			elif dist > child.LOD2_Dist and dist < child.LOD3_Dist: #LOD2
+				child.set_LOD(2)
+			elif dist > child.LOD3_Dist: #LOD3
+				child.set_LOD(3)
+			else: #LOD0
+				child.set_LOD(0)
+			#child.set_Distance(dist)
