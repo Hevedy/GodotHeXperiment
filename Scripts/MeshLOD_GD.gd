@@ -91,10 +91,10 @@ func find_LODs():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.add_to_group("MeshLOD")
+	#self.add_to_group("MeshLOD")
 	find_LODs()
 	if LOD_Preview < 0:
-		set_Distance(1000.0)
+		set_LOD(0)
 	else:
 		set_LOD(LOD_Preview)
 
@@ -117,12 +117,9 @@ func set_Distance(value:float):
 
 func set_LOD(value: int):
 	var a = clamp(value,0,LOD_Num-1)
-	if a < 0:
+	if LOD == a:
 		return
-	#if( LOD == a ):
-	#	return
 	
-	LODLast = LOD
 	match a:
 		0:
 			LOD1_Inst.visible = false
@@ -144,7 +141,13 @@ func set_LOD(value: int):
 			LOD1_Inst.visible = false
 			LOD2_Inst.visible = false
 			LOD3_Inst.visible = true
+		-1:
+			LOD0_Inst.visible = false
+			LOD1_Inst.visible = false
+			LOD2_Inst.visible = false
+			LOD3_Inst.visible = false
 			
+	LODLast = LOD
 	LOD = a
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

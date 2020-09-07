@@ -28,7 +28,7 @@
 extends Spatial
 class_name LODManager_GD
 
-export(float) var LOD_DistanceMax := 10000.0 setget set_LODDistanceMax
+export(float) var LOD_DistanceMax := 1000.0 setget set_LODDistanceMax
 
 var thread
 var threadTerminated: bool = false

@@ -35,7 +35,6 @@ var threadTerminated: bool = false
 var PlayerCamEditor
 var LODNodesListEditor = []
 var LODsEditorSet: bool = false
-var LODDistanceMax
 
 func set_LODDistanceMax(value : float) -> void:
 	LOD_DistanceMax = value
@@ -103,7 +102,7 @@ func _editor_function(scene):
 	for child in children_of_bindings:
 		print(child)
 		if child is MeshLOD_GD:
-			print(child)
+			#print(child)
 			LODNodesListEditor.insert(LODNodesListEditor.size(),child)
 	
 	if LODNodesListEditor.size() > 0:
@@ -115,7 +114,6 @@ func _editor_function(scene):
 		LODsEditorSet = false
 		
 	if LODsEditorSet:
-		LODDistanceMax = max(100.0, LOD_DistanceMax)
 		threadTerminated = false
 		threadTerminated = false
 		thread = Thread.new()
@@ -125,6 +123,7 @@ func _editor_function(scene):
 		
 
 func _editorTick_function(_userdata):
+	var lodDistanceMax = max(100.0, LOD_DistanceMax)
 	while(true):
 		if isThreadTerminated():
 			return
@@ -134,7 +133,7 @@ func _editorTick_function(_userdata):
 		else:
 			camLoc = Vector3.ZERO
 		for child in LODNodesListEditor:
-			var dist = clamp(child.global_transform.origin.distance_to( camLoc ),0.0,LODDistanceMax)
+			var dist = clamp(child.global_transform.origin.distance_to( camLoc ),0.0,lodDistanceMax)
 			#print(dist)
 			if child.LODDistance == dist:
 				continue
